@@ -42,24 +42,32 @@
 			jr $ra
 	
 	PARSE_COMMAND:
-        addi $sp, $sp, -4
+        addi $sp, $sp, -8
         sw $ra, 0($sp)
 
         la $a0, input
+		jal SPLIT_INPUT
+
+		sw $v1 , 4($sp)
+		
+		move $a0, $v0
         la $a1, cmd_ls
         jal STRCMP
         beq $v0, 0, DO_LS
 
+		move $a0, $v0
         la $a0, input
         la $a1, cmd_ps
         jal STRCMP
         beq $v0, 0, DO_PS
 
+		move $a0, $v0
         la $a0, input
         la $a1, cmd_mkdir
         jal STRCMP
         beq $v0, 0, DO_MKDIR
 
+		move $a0, $v0
         la $a0, input
         la $a1, cmd_exit
         jal STRCMP
@@ -77,4 +85,4 @@
 		
 		
 .include "commands.asm"
-.include "utils.asm"
+
