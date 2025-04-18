@@ -21,14 +21,32 @@
         j EXIT
 
     CMD_LS:
-        li $v0, 4
-        la $a0, cmd_ls
-        syscall
-        li $v0, 11
-        li $a0, '\n'
-        syscall
-        jr $ra
-
+        la $t0 , root_entries
+        lw $t1 , ($t0)
+        beq $t1 , 0 , ls_done
+   	
+   	ls_loop:
+   		lw $a0 , ($t1) 
+   		li $v0 , 4
+   		syscall
+   		
+   		addi $t0 , $t0 , 4
+   		lw $t2 , ($t0)
+   		beq $t2 , 0 , ls_no_space
+   		li $v0 , 11
+   		li $a0 , 32
+   		syscall
+   	ls_no_space:
+   		move $t1 , $t2
+   		bne $t1 , 0 , ls_loop
+   	ls_done:
+    		li $v0, 11
+    		li $a0, '\n'
+    		syscall
+    		jr $ra
+   		 
+      
+       
     CMD_PS:
         li $v0, 4
         la $a0, cmd_ps
@@ -60,4 +78,5 @@
         jr $ra
         
 .include "utils.asm"
+.include "filesystem.asm"
 
